@@ -37,21 +37,23 @@ void half_force_solver(half* eval_pos, half* part_pos, half* mass, float* output
             part_posy = part_pos[j*3 + 1];
             part_posz = part_pos[j*3 + 2];
 
-            part_mass = __float2half(mass[j]);
+            if (__hne(part_posx,eval_posx) || __hne(part_posy,eval_posy) || __hne(part_posz,eval_posz)){
 
-            diffx = __hsub(eval_posx,part_posx);
-            diffy = __hsub(eval_posy,part_posy);
-            diffz = __hsub(eval_posz,part_posz);
+                part_mass = __float2half(mass[j]);
 
-            temp0 = __hfma(diffx,diffx,heps);
-            temp1 = __hfma(diffy,diffy,temp0);
-            temp0 = __hfma(diffz,diffz,temp1);
+                diffx = __hsub(eval_posx,part_posx);
+                diffy = __hsub(eval_posy,part_posy);
+                diffz = __hsub(eval_posz,part_posz);
 
-            dist = hsqrt(temp0);
+                temp0 = __hfma(diffx,diffx,heps);
+                temp1 = __hfma(diffy,diffy,temp0);
+                temp0 = __hfma(diffz,diffz,temp1);
 
-            temp1 = __hdiv(__hmul(hG,part_mass),dist);
+                dist = hsqrt(temp0);
 
-            gpe = gpe + __half2float(temp1);
+                temp1 = __hdiv(__hmul(hG,part_mass),dist);
+                gpe = gpe + __half2float(temp1);
+            }
 
         }
 

@@ -6,7 +6,7 @@ warnings.filterwarnings("ignore")
 
 class Sample(object):
     @staticmethod
-    def Uniform(n,r=1,p=1,G=1,file=None):
+    def Uniform(n,r=1,p=1,G=1,M=None,file=None):
         """Generates a sample from a homogenous distribution.
 
         A function that takes in the number of particles, the radius, the density and the G value, and returns a sample.
@@ -30,13 +30,16 @@ class Sample(object):
             The sample
 
         """
+        vol = (4/3) * np.pi * (r ** 3)
+        if M != None:
+            p = M/vol
+
         phi = np.random.uniform(low=0,high=2*np.pi,size=n)
         theta = np.arccos(np.random.uniform(low=-1,high=1,size=n))
         particle_r = r * ((np.random.uniform(low=0,high=1,size=n))**(1/3))
         x = particle_r * np.sin(theta) * np.cos(phi)
         y = particle_r * np.sin(theta) * np.sin(phi)
         z = particle_r * np.cos(theta)
-        vol = (4/3) * np.pi * (r ** 3)
         particle_mass = (p * vol)/n
         particles = np.column_stack([x,y,z])
         velocities = np.zeros_like(particles,dtype=float)
@@ -203,7 +206,7 @@ class Sample(object):
 
 class Analytic(object):
     @staticmethod
-    def Uniform(positions,r=1,p=1,G=1):
+    def Uniform(positions,r=1,p=1,G=1,M=None):
         """Returns the analytic potential of a Uniform Density profile.
 
         A function that takes in coordinates, the radius, the density and the G value, and returns the analytic potential at the coordinates.
@@ -225,6 +228,11 @@ class Analytic(object):
             The potentials at the points with shape equal to the number of positions.
 
         """
+
+        vol = (4/3) * np.pi * (r ** 3)
+        if M != None:
+            p = M/vol
+
         positions = positions.loc[:,["x","y","z"]].to_numpy()
         def phi(r,p,pos):
             pos_r = spatial.distance.cdist(np.array([[0,0,0]]),np.reshape(pos,(1,)+pos.shape)).flatten()[0]
