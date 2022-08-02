@@ -9,7 +9,6 @@ void half_force_solver(half* eval_pos, half* part_pos, half* mass, float* output
     if (i < n_evals){
         
         __half heps = __float2half(eps);
-        __half hG = __float2half(G);
 
         __half eval_posx = eval_pos[i*3];
         __half eval_posy = eval_pos[i*3 + 1];
@@ -39,7 +38,7 @@ void half_force_solver(half* eval_pos, half* part_pos, half* mass, float* output
 
             if (__hne(part_posx,eval_posx) || __hne(part_posy,eval_posy) || __hne(part_posz,eval_posz)){
 
-                part_mass = __float2half(mass[j]);
+                part_mass = mass[j];
 
                 diffx = __hsub(eval_posx,part_posx);
                 diffy = __hsub(eval_posy,part_posy);
@@ -51,13 +50,13 @@ void half_force_solver(half* eval_pos, half* part_pos, half* mass, float* output
 
                 dist = hsqrt(temp0);
 
-                temp1 = __hdiv(__hmul(hG,part_mass),dist);
+                temp1 = __hdiv(part_mass,dist);
                 gpe = gpe + __half2float(temp1);
             }
 
         }
 
-        output[i] = (-1) * gpe;
+        output[i] = (-1) * G * gpe;
     }
 
 }

@@ -32,7 +32,7 @@ void double_force_solver(double* eval_pos, double* part_pos, double* mass, doubl
             part_posy = part_pos[j*3 + 1];
             part_posz = part_pos[j*3 + 2];
 
-            if (!((part_posx == eval_posx) && (part_posy == eval_posy) && (part_posz == eval_posz))){
+            if ((part_posx != eval_posx) || (part_posy != eval_posy) || (part_posz != eval_posz)){
 
                 part_mass = mass[j];
 
@@ -42,7 +42,7 @@ void double_force_solver(double* eval_pos, double* part_pos, double* mass, doubl
 
                 dist = sqrt((diffx*diffx) + (diffy*diffy) + (diffz*diffz) + eps);
 
-                temp0 = ((-1) * G * part_mass) / dist;
+                temp0 = (part_mass) / dist;
 
                 gpe = gpe + temp0;
 
@@ -50,7 +50,7 @@ void double_force_solver(double* eval_pos, double* part_pos, double* mass, doubl
 
         }
 
-        output[i] = gpe;
+        output[i] = (-1) * G * gpe;
     }
 
 }

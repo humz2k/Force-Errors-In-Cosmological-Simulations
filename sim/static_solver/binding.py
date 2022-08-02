@@ -69,3 +69,33 @@ def evaluate(eval_df,particle_df,G=1,eps=0,precision="f4"):
         solver.double_precision(eval_pos_ptr,part_pos_ptr,part_mass_ptr,output_ptr,ctypes.c_int(n_evals),ctypes.c_int(n_particles),ctypes.c_double(G),ctypes.c_double(eps**2),saveTimePtr)
 
         return output,save_time.value
+    
+    elif precision == "f4-smcuda":
+        eval_pos = eval_df.loc[:,["x","y","z"]].to_numpy().flatten().astype(np.float32)
+        part_pos = particle_df.loc[:,["x","y","z"]].to_numpy().flatten().astype(np.float32)
+        part_mass = particle_df.loc[:,"mass"].to_numpy().flatten().astype(np.float32)
+        output = np.zeros((n_evals),dtype=np.float32)
+
+        eval_pos_ptr = eval_pos.ctypes.data_as(ctypes.POINTER(ctypes.c_float))
+        part_pos_ptr = part_pos.ctypes.data_as(ctypes.POINTER(ctypes.c_float))
+        part_mass_ptr = part_mass.ctypes.data_as(ctypes.POINTER(ctypes.c_float))
+        output_ptr = output.ctypes.data_as(ctypes.POINTER(ctypes.c_float))
+
+        solver.single_precision_shared_mem_cuda(eval_pos_ptr,part_pos_ptr,part_mass_ptr,output_ptr,ctypes.c_int(n_evals),ctypes.c_int(n_particles),ctypes.c_float(G),ctypes.c_float(eps**2),saveTimePtr)
+
+        return output,save_time.value
+    
+    elif precision == "f2-smcuda":
+        eval_pos = eval_df.loc[:,["x","y","z"]].to_numpy().flatten().astype(np.float16)
+        part_pos = particle_df.loc[:,["x","y","z"]].to_numpy().flatten().astype(np.float16)
+        part_mass = particle_df.loc[:,"mass"].to_numpy().flatten().astype(np.float16)
+        output = np.zeros((n_evals),dtype=np.float32)
+
+        eval_pos_ptr = eval_pos.ctypes.data_as(ctypes.POINTER(ctypes.c_void_p))
+        part_pos_ptr = part_pos.ctypes.data_as(ctypes.POINTER(ctypes.c_void_p))
+        part_mass_ptr = part_mass.ctypes.data_as(ctypes.POINTER(ctypes.c_void_p))
+        output_ptr = output.ctypes.data_as(ctypes.POINTER(ctypes.c_float))
+
+        solver.half_precision_shared_mem_cuda(eval_pos_ptr,part_pos_ptr,part_mass_ptr,output_ptr,ctypes.c_int(n_evals),ctypes.c_int(n_particles),ctypes.c_float(G),ctypes.c_float(eps**2),saveTimePtr)
+
+        return output,save_time.value
