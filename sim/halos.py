@@ -4,6 +4,15 @@ from scipy import spatial,special
 import warnings
 warnings.filterwarnings("ignore")
 
+class MIPD(object):
+    @staticmethod
+    def Uniform(n,r):
+        return ((4/3) * np.pi * r**3)/n
+    
+    @staticmethod
+    def NFW(n,Rs):
+        pass
+
 class Sample(object):
     @staticmethod
     def Uniform(n,r=1,p=1,G=1,M=None,file=None):
