@@ -1,0 +1,1 @@
+extern "C" { void single_precision(float* input_pos, float* input_vel, float* input_mass, int n_particles, int steps, float G, float eps, float dt, unsigned long long* timer); }
