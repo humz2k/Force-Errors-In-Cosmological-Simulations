@@ -13,6 +13,13 @@ class MIPD(object):
     def NFW(n,Rs):
         pass
 
+class Density(object):
+    @staticmethod
+    def NFW(r,c,Mvir=1):
+        Rs = 1/c
+        p0 = Mvir / 4 * np.pi * (Rs**3) * (np.log(1+c) - (c/(1+c)))
+        return (p0)/(r * ((1+r)**2))
+
 class Sample(object):
     @staticmethod
     def Uniform(n,r=1,p=1,G=1,M=None,file=None):
@@ -126,7 +133,7 @@ class Sample(object):
         return df
 
     @staticmethod
-    def NFW(n,Rs=1,p0=1,c=1,a=100,G=1,file=None):
+    def NFW(n,Mvir=1,c=1,a=200,G=1,file=None):
         """Generates a sample from a NFW density profile.
 
         A function that takes in the number of particles, the scale radius, p0, the concentration, the number of times Rvir to sample up to and the G value, and returns a sample.
@@ -135,14 +142,12 @@ class Sample(object):
         ----------
         n : int
             The number of particles in the resulting sample.
-        Rs : float
-            The scale radius of the resulting sample. If unspecified, the scale radius defaults to 1.
-        p0 : float
-            The p0 density of the resulting sample. If unspecified, p0 defaults to 1.
+        Mvir : float
+            The virial mass of the resulting sample.
         c : float
             The concentration of the resulting sample. If unspecified, the concentration defaults to 1.
         a : float
-            How many times Rvir to sampled up to. If unspecified, a defaults to 1.
+            How many times Rvir to sampled up to. If unspecified, a defaults to 200.
         G : float
             The G constant for the simulation. If unspecified, the G constant defaults to 1.
         file : str
@@ -173,11 +178,12 @@ class Sample(object):
             x = r/Rs
             return  np.sqrt((1/x) * (np.log(1+c*x) - (c*x)/(1+c*x))/(np.log(1+c)-c/(1+c)))
                     
-        Rvir = c*Rs
+        Rvir = 1
+        Rs = Rvir/c
         aRvir = a * Rvir
         
-        maxMass = 4 * np.pi * p0 * (Rs**3) * (np.log(1+a*c) - ((a*c)/(1+a*c)))
-        virialMass = 4 * np.pi * p0 * (Rs**3) * (np.log(1+c) - (c/(1+c)))
+        p0 = Mvir / 4 * np.pi * (Rs**3) * (np.log(1+c) - (c/(1+c)))
+        maxMass = (4 * np.pi * p0 * (Rs**3) * (np.log(1+a*c) + 1/(1+a*c) - 1))
 
         radiuses = rnfw(n,c,a) * aRvir
 
@@ -187,7 +193,7 @@ class Sample(object):
         y = radiuses * np.sin(theta) * np.sin(phi)
         z = radiuses * np.cos(theta)
 
-        Vvir = np.sqrt((G*virialMass)/Rvir)
+        Vvir = np.sqrt((G*Mvir)/Rvir)
 
         vel = np.zeros_like(radiuses)
         for idx,r in enumerate(radiuses):
@@ -258,7 +264,7 @@ class Analytic(object):
         return out
 
     @staticmethod
-    def NFW(positions,Rs=1,p0=1,G=1):
+    def NFW(positions,c=1,Mvir=1,G=1):
         """Returns the analytic potential of a NFW profile.
 
         A function that takes in coordinates, the scale radius, p0, and the G value, and returns the analytic potential at the coordinates.
@@ -280,6 +286,10 @@ class Analytic(object):
             The potentials at the points with shape equal to the number of positions.
 
         """
+
+        Rs = 1/c
+        p0 = Mvir / 4 * np.pi * (Rs**3) * (np.log(1+c) - (c/(1+c)))
+        
         positions = positions.loc[:,["x","y","z"]].to_numpy()
         def phi(Rs,pos):
             pos_r = spatial.distance.cdist(np.array([[0,0,0]]),np.reshape(pos,(1,)+pos.shape)).flatten()[0]

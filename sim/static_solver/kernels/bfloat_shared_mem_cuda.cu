@@ -1,0 +1,82 @@
+//#include "kernels.h"
+//#include <cuda_bf16.h>
+/*
+__global__
+void bfloat16_force_solver_shared_mem_cuda(float* eval_pos, float* part_pos, float* mass, float* output, float G, float eps, int n_particles, int n_evals){    
+    
+    int i = blockDim.x * blockIdx.x + threadIdx.x;
+
+    extern __shared__ __nv_bfloat162 s[];
+
+    int n_repeats = (n_particles + blockDim.x - 1) / blockDim.x;
+
+    __nv_bfloat162 eval_posxy;
+    __nv_bfloat16 eval_posz;
+
+    __nv_bfloat162 part_posxy;
+    __nv_bfloat16 part_posz;
+    __nv_bfloat16 part_mass;
+
+    __nv_bfloat162 diffxy;
+    __nv_bfloat16 diffz;
+
+    __nv_bfloat162 temp;
+
+    __nv_bfloat16 temp1;
+    __nv_bfloat16 temp2;
+    __nv_bfloat16 temp3;
+
+    float gpe = 0;
+
+    if (i < n_evals){
+
+        eval_posxy = __floats2bfloat162_rn(eval_pos[i * 3], eval_pos[i * 3 + 1]);
+        eval_posz = __float2bfloat16(eval_pos[i * 3 + 2]);
+
+    }
+
+    for (int j = 0; j < n_repeats; j++){
+
+        int offset = blockDim.x * j;
+        int myIdx = offset + threadIdx.x;
+
+        s[threadIdx.x * 2] = __floats2bfloat162_rn(part_pos[myIdx * 3],part_pos[myIdx * 3 + 1]);
+        s[threadIdx.x * 2 + 1] = __floats2bfloat162_rn(part_pos[myIdx * 3 + 2],mass[myIdx]);
+
+        for (int k = 0; k < blockDim.x; k++){
+
+            if ((k + offset) < n_particles){
+
+                part_posxy = s[k * 2];
+                part_posz = __low2bfloat16(s[k * 2 + 1]);
+                part_mass = __high2bfloat16(s[k * 2 + 1]);
+
+                if (__hne(part_posz,eval_posz) || (!(__hbeq2(part_posxy,eval_posxy)))){
+
+                    diffxy = __hsub2(eval_posxy,part_posxy);
+                    diffz = __hsub(eval_posz,part_posz);
+
+                    temp = __hmul2(diffxy,diffxy);
+                    temp1 = __hfma(diffz,diffz,eps);
+                    temp2 = __hadd(__low2bfloat16(temp),__high2bfloat16(temp));
+                    temp3 = __hadd(temp1,temp2);
+
+                    temp1 = hsqrt(temp3);
+                    temp2 = __hdiv(part_mass,temp1);
+
+                    gpe = gpe + __bfloat162float(temp2);
+                }
+
+            }
+        }
+
+    }
+
+    if (i < n_evals){
+
+        output[i] = (-1) * G * gpe;
+
+    }
+
+}
+*/
