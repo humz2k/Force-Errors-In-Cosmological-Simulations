@@ -182,7 +182,7 @@ class Sample(object):
         Rs = Rvir/c
         aRvir = a * Rvir
         
-        p0 = Mvir / 4 * np.pi * (Rs**3) * (np.log(1+c) - (c/(1+c)))
+        p0 = Mvir / (4 * np.pi * (Rs**3) * (np.log(1+c) - (c/(1+c))))
         maxMass = (4 * np.pi * p0 * (Rs**3) * (np.log(1+a*c) + 1/(1+a*c) - 1))
 
         radiuses = rnfw(n,c,a) * aRvir
@@ -288,7 +288,7 @@ class Analytic(object):
         """
 
         Rs = 1/c
-        p0 = Mvir / 4 * np.pi * (Rs**3) * (np.log(1+c) - (c/(1+c)))
+        p0 = Mvir / (4 * np.pi * (Rs**3) * (np.log(1+c) - (c/(1+c))))
         
         positions = positions.loc[:,["x","y","z"]].to_numpy()
         def phi(Rs,pos):
