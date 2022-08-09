@@ -1,32 +1,33 @@
 import sim
 import scipy.spatial
+import numpy as np
+import time
 
-df = sim.halos.Sample.Uniform(6)
+df = sim.halos.Sample.Uniform(5000)
 
-#a = df.loc[:,["x","y","z"]].to_numpy()
-#print(a)
-#a = a.T.reshape((a.shape[1], a.shape[0]//2) + (2,)).transpose((1,0,2)).flatten()
-#print(a)
+ray = sim.utils.ray(np.array([1,0,0]),1,2)
+print(ray)
 
-n_particles = 6
+mass = df.loc[:,"mass"][0]
 
-#a = sim.distances.evaluate(df,df,precision="f8")
-
-#c = sim.distances.evaluate(df,df,precision="f4")
-
-d = sim.distances.evaluate(df,df,precision="f2")
-for i in d:
-    print(i)
-
+#d = sim.distances.cudaDist(ray,df,precision="f8")
 #print(d)
+
+
+d = sim.distances.listPhis(ray,df,precision="f8")
+print(d)
+
+#d = sim.distances.listPhis(ray,df,precision="f2")
+#print(d)
+
 
 particles = df.loc[:,["x","y","z"]].to_numpy()
+ray_pos = ray.loc[:,["x","y","z"]].to_numpy()
+t1 = time.perf_counter()
+b = scipy.spatial.distance.cdist(ray_pos,particles)
+phis = -mass/b
 
-b = scipy.spatial.distance.cdist(particles,particles)
+t2 = time.perf_counter()
+phi = -1*mass/b
 
-#print(d)
-print(b)
-#print(b)
-
-#print(a)
-#print(d)
+#print((phi - d)/phi)
