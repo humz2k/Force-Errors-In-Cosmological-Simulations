@@ -114,6 +114,22 @@ def points2radius(points):
     points = points.loc[:,["x","y","z"]].to_numpy()
     return spatial.distance.cdist(np.array([[0,0,0]]),points).flatten()
 
+def bin_phi(phis,dists,ri,r=1,nbins=50):
+    bins = np.linspace(0,r + ri,nbins)
+    start = bins[:-1]
+    end = bins[1:]
+    step = bins[1]-bins[0]
+    xs = (end-start)/2 + start
+    ys = []
+    ahh = 0
+    for idx in range(len(start)):
+        temp_dists = dists[dists > start[idx]]
+        temp_phis = phis[dists > start[idx]]
+        temp_phis = temp_phis[temp_dists <= end[idx]]
+        ahh += len(temp_phis)
+        ys.append(np.sum(temp_phis))
+    return xs,np.array(ys)
+
 def outdf2numpy(df):
     """Converts an output DF from an evaluation, and converts it to numpy arrays.
 
