@@ -15,8 +15,7 @@ def evaluate(particle_df,G=1,eps=0,steps=0,dt=1/64,precision="f4",n_params=10):
     n_particles = len(particle_df.index)
 
     pad = ((n_particles + 255)//256) * 256 - n_particles
-    print("PAD",pad)
-    
+
     vel_pad = np.zeros((pad * 3)).astype(np.float32)
     pos_pad = np.repeat(np.inf,pad*3).astype(np.float16).astype(np.float32)
 

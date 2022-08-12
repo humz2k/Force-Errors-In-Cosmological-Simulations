@@ -41,7 +41,6 @@ void half_force_solver(half2* part_pos, float mass, half2 eps, float G, float* o
     float2 phi;
     __half2 acc_mul;
 
-    __half2 dist;
     __half2 dist_cube;
 
     float2 ax;
@@ -49,7 +48,6 @@ void half_force_solver(half2* part_pos, float mass, half2 eps, float G, float* o
     float2 az;
 
     float temp2;
-    float temp1;
 
     __half2 temp;
 
@@ -145,16 +143,15 @@ void half_force_solver(half2* part_pos, float mass, half2 eps, float G, float* o
         }
 
     temp2 = G * mass * mass;
-    temp1 = (-1) * G * mass;
 
     output[(i*2)*4] = out_ax.x * temp2;
     output[(i*2)*4 + 1] = out_ay.x * temp2;
     output[(i*2)*4 + 2] = out_az.x * temp2;
-    output[(i*2)*4 + 3] = out_phi.x * temp1;
+    output[(i*2)*4 + 3] = out_phi.x * temp2 * (-1);
 
     output[(i*2 + 1)*4] = out_ax.y * temp2;
     output[(i*2 + 1)*4 + 1] = out_ay.y * temp2;
     output[(i*2 + 1)*4 + 2] = out_az.y * temp2;
-    output[(i*2 + 1)*4 + 3] = out_phi.y * temp1;
+    output[(i*2 + 1)*4 + 3] = out_phi.y * temp2 * (-1);
 
 }
