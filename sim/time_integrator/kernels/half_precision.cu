@@ -86,13 +86,13 @@ void half_force_solver(half2* part_pos, float mass, half2 eps, float G, float* o
                     ay = __half22float2(__hmul2(acc_mul,diffy));
                     az = __half22float2(__hmul2(acc_mul,diffz));
 
-                    if (!(isnan(ax.x) || isnan(ay.x) || isnan(az.x))){
+                    if (!(isnan(ax.x) || isnan(ay.x) || isnan(az.x) || isinf(ax.x) || isinf(ay.x) || isinf(az.x))){
                         out_phi.x += phi.x;
                         out_ax.x += ax.x;
                         out_ay.x += ay.x;
                         out_az.x += az.x;
 
-                        if (!(isnan(ax.y) || isnan(ay.y) || isnan(az.y))){
+                        if (!(isnan(ax.y) || isnan(ay.y) || isnan(az.y) || isinf(ax.y) || isinf(ay.y) || isinf(az.y))){
                             out_phi.y += phi.y;
                             out_ax.y += ax.y;
                             out_ay.y += ay.y;
@@ -123,13 +123,13 @@ void half_force_solver(half2* part_pos, float mass, half2 eps, float G, float* o
                 ay = __half22float2(__hmul2(acc_mul,diffy));
                 az = __half22float2(__hmul2(acc_mul,diffz));
 
-                if (!(isnan(ax.x) || isnan(ay.x) || isnan(az.x))){
+                if (!(isnan(ax.x) || isnan(ay.x) || isnan(az.x) || isinf(ax.x) || isinf(ay.x) || isinf(az.x))){
                     out_phi.x += phi.x;
                     out_ax.x += ax.x;
                     out_ay.x += ay.x;
                     out_az.x += az.x;
 
-                    if (!(isnan(ax.y) || isnan(ay.y) || isnan(az.y))){
+                    if (!(isnan(ax.y) || isnan(ay.y) || isnan(az.y) || isinf(ax.y) || isinf(ay.y) || isinf(az.y))){
                         out_phi.y += phi.y;
                         out_ax.y += ax.y;
                         out_ay.y += ay.y;
